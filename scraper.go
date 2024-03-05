@@ -49,11 +49,11 @@ func main() {
 	}
 
 	// save links to a txt file
-	saveToTextFile(links, "output.txt")
-	fmt.Println("Data saved to output.text")
+	saveToFile(links, "links.txt")
+	fmt.Println("Data saved to links.text")
 }
 
-func saveToTextFile(data []string, filename string) error {
+func saveToFile(data []string, filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
