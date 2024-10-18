@@ -1,5 +1,5 @@
 module webscraper
 
-go 1.22.0
+go 1.23.2
 
-require golang.org/x/net v0.22.0 // indirect
+require golang.org/x/net v0.29.0
