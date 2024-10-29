@@ -1,5 +1,5 @@
-module webscraper
+module github.com/ctrl-alt-adrian/webscraper
 
 go 1.23.2
 
-require golang.org/x/net v0.29.0
+require golang.org/x/net v0.30.0
