@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"golang.org/x/net/html"
 )
 
-func scraper(url string, options string) {
+func scraper(websiteUrl string, options string) {
+
+	url := addUrlPrefix(websiteUrl)
 
 	// make http request
 	resp, err := http.Get(url)
@@ -22,6 +25,13 @@ func scraper(url string, options string) {
 	tokenizer := html.NewTokenizer(resp.Body)
 
 	fetchFromSelectedOption(tokenizer, options)
+}
+
+func addUrlPrefix(url string) string {
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		url = "https://" + url
+	}
+	return url
 }
 
 func fetchFromSelectedOption(tokenizer *html.Tokenizer, option string) {

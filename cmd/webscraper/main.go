@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -13,10 +12,8 @@ func main() {
 	// get url and format options  from command line
 	websiteUrl, fetchOption := getUserInput()
 
-	url := addUrlPrefix(websiteUrl)
-
 	// scrape site
-	scraper(url, fetchOption)
+	scraper(websiteUrl, fetchOption)
 
 }
 
@@ -35,13 +32,6 @@ func getUserInput() (string, string) {
 	fmt.Scanln(&fetchOption)
 
 	return websiteUrl, fetchOption
-}
-
-func addUrlPrefix(url string) string {
-	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-		url = "https://" + url
-	}
-	return url
 }
 
 func saveToFile(data []string, filename string) error {
