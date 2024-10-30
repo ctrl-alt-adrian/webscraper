@@ -2,55 +2,46 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
-
-	"golang.org/x/net/html"
+	"strings"
 )
 
 func main() {
-	// get url from command line
-	url := os.Args[1]
 
-	// make http request
-	resp, err := http.Get(url)
-	if err != nil {
-		fmt.Println("Error making http request: ", err)
-		os.Exit(1)
+	greetUser()
+
+	// get url and format options  from command line
+	websiteUrl, fetchOption := getUserInput()
+
+	url := addUrlPrefix(websiteUrl)
+
+	// scrape site
+	scraper(url, fetchOption)
+
+}
+
+func greetUser() {
+	fmt.Println("Welcome. Let's get started")
+}
+
+func getUserInput() (string, string) {
+	var websiteUrl string
+	var fetchOption string
+
+	fmt.Println("Enter the website url that you want to scrape")
+	fmt.Scanln(&websiteUrl)
+
+	fmt.Println("What do you want to retrieve? Just the links, images, or all of the above")
+	fmt.Scanln(&fetchOption)
+
+	return websiteUrl, fetchOption
+}
+
+func addUrlPrefix(url string) string {
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		url = "https://" + url
 	}
-	defer resp.Body.Close()
-
-	// parse html
-	tokenizer := html.NewTokenizer(resp.Body)
-
-	// extract links from html
-	var links []string
-	for {
-		tokenType := tokenizer.Next()
-
-		if tokenType == html.ErrorToken {
-			break
-		}
-
-		if tokenType == html.StartTagToken {
-			token := tokenizer.Token()
-
-			// check for "a" tag
-			if token.Data == "a" {
-				for _, attr := range token.Attr {
-					// check for href attribute
-					if attr.Key == "href" {
-						links = append(links, attr.Val)
-					}
-				}
-			}
-		}
-
-	}
-
-	// save links to a txt file
-	saveToFile(links, "links.txt")
-	fmt.Println("Data saved to links.text")
+	return url
 }
 
 func saveToFile(data []string, filename string) error {
