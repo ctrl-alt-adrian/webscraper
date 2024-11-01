@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 )
 
 func main() {
@@ -28,26 +27,8 @@ func getUserInput() (string, string) {
 	fmt.Println("Enter the website url that you want to scrape")
 	fmt.Scanln(&websiteUrl)
 
-	fmt.Println("What do you want to retrieve? Just the links, images, or all of the above")
+	fmt.Println("What do you want to retrieve? Just the links, or images")
 	fmt.Scanln(&fetchOption)
 
 	return websiteUrl, fetchOption
-}
-
-func saveToFile(data []string, filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-
-	defer file.Close()
-
-	for _, entry := range data {
-		_, err := file.WriteString(entry + "\n")
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

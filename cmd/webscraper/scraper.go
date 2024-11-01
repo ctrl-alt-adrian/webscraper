@@ -5,9 +5,12 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"golang.org/x/net/html"
 )
+
+var wg = sync.WaitGroup{}
 
 func scraper(websiteUrl string, options string) {
 
@@ -35,19 +38,17 @@ func addUrlPrefix(url string) string {
 }
 
 func fetchFromSelectedOption(tokenizer *html.Tokenizer, option string) {
-	// will need to pass in fetch options to retrieve only selected otion
-	// will have to figure out how to save file to different directory location
-	// will need to retrieve images and other information separately as an option
 
 	fmt.Printf("The token is %v, and the option selected is %v", tokenizer, option)
 
 	var links []string
 	var images []string
 
+	wg.Add(1)
 	if option == "links" {
+
 		for {
 			tokenType := tokenizer.Next()
-			fmt.Printf("The token type is %v", tokenType)
 			if tokenType == html.ErrorToken {
 				break
 			}
@@ -85,18 +86,39 @@ func fetchFromSelectedOption(tokenizer *html.Tokenizer, option string) {
 					for _, attr := range token.Attr {
 						// check for href attribute
 						if attr.Key == "src" {
-							// check if alt exists. if so replace file value with alt value
-							if attr.Key == "alt" {
-								images = append(images, attr.Val+" ("+attr.Val+")")
-							}
+							// TODO: check if alt exists. if so replace file value with alt value
+
+							// if attr.Key == "alt" {
+							// 	images = append(images, attr.Val+" ("+attr.Val+")")
+							// }
 							images = append(images, attr.Val)
 						}
 						fmt.Println("images", images)
 					}
 				}
 			}
+			// TODO: save images inside of a directory instead of a text file
 			saveToFile(images, "images.txt")
 		}
 
 	}
+	wg.Wait()
+}
+
+func saveToFile(data []string, filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	for _, entry := range data {
+		_, err := file.WriteString(entry + "\n")
+		if err != nil {
+			return err
+		}
+	}
+	wg.Done()
+	return nil
 }
