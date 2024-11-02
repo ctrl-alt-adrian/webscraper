@@ -27,7 +27,7 @@ func scraper(websiteUrl string, options string) {
 	// get token
 	tokenizer := html.NewTokenizer(resp.Body)
 
-	fetchFromSelectedOption(tokenizer, options)
+	go fetchFromSelectedOption(tokenizer, options)
 }
 
 func addUrlPrefix(url string) string {
